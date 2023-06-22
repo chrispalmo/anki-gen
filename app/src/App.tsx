@@ -1,4 +1,3 @@
-// hello?
 import React, { useState, ChangeEvent, MouseEvent, useEffect, useRef, CSSProperties } from "react";
 import pinyin from "pinyin";
 
@@ -50,9 +49,18 @@ const EditableField: React.FC<{
     fontFamily: 'Arial, sans-serif',
     fontSize: '1rem',
     width: '100%',
-    padding: '0.125rem',
-    border: '1px solid #ccc',
+    padding: '0.1rem',
+    margin: '1rem 2rem 1rem 2rem',
+    border: '2px solid white',
     textAlign: 'left',
+  };
+
+  const textareaStyles: CSSProperties = {
+    ...sharedStyles,
+    paddingTop: '0.08rem',
+    paddingLeft: '0.09rem',
+    resize: 'none',
+    overflow: 'hidden',
   };
 
   useEffect(() => {
@@ -72,17 +80,17 @@ const EditableField: React.FC<{
   const lines = value.split('\n');
   const isLastLine = (i: number) => i === lines.length - 1;
   const isSingleLineValue = (i: number) => lines.length === 1;
-  const divValue = lines.map((text, index) => (
+  const divContent = lines.map((text, index) => (
     <React.Fragment key={index}>
       {text}
-      {(isLastLine(index) && !isSingleLineValue) ? <br /> : null}
+      {isLastLine(index) && !isSingleLineValue ? <br /> : null}
     </React.Fragment>
   ));
 
   return isEditing ? (
     <textarea
       ref={textareaRef}
-      style={{ ...sharedStyles, resize: 'none', overflow: 'hidden' }}
+      style={textareaStyles}
       value={value}
       onBlur={() => setIsEditing(false)}
       onChange={e => onChange(e.target.value)}
@@ -92,7 +100,7 @@ const EditableField: React.FC<{
       onClick={() => setIsEditing(true)}
       style={{ ...sharedStyles, minHeight: '1em', whiteSpace: 'pre-wrap' }}
     >
-      {divValue}
+      {divContent}
     </div>
   );
 };
@@ -125,14 +133,14 @@ const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: Phrase[
           <tbody>
             {phrases.map((phrase, index) => (
               <tr key={index}>
-                <td style={{ width: '45%' }}>
+                <td style={{ width: '45%', verticalAlign: 'top', textAlign: 'left' }}>
                   <EditableField value={phrase.original} onChange={value => handleTextChange(index, 'original', value)} />
                 </td>
-                <td style={{ width: '45%' }}>
+                <td style={{ width: '45%', verticalAlign: 'top', textAlign: 'left'  }}>
                   <EditableField value={phrase.pinyin} onChange={value => handleTextChange(index, 'pinyin', value)} />
                 </td>
-                <td style={{ width: '10%' }}>
-                  <input type="checkbox" style={{ marginLeft: 'auto', marginRight: 'auto' }} checked={phrase.cloze} onChange={e => handleCheckboxChange(index, e.target.checked)} />
+                <td style={{ width: '10%' , verticalAlign: 'top', textAlign: 'center' }}>
+                  <input type="checkbox" style={{ margin: '1rem 2rem 2rem 1rem' }} checked={phrase.cloze} onChange={e => handleCheckboxChange(index, e.target.checked)} />
                 </td>
               </tr>
             ))}
