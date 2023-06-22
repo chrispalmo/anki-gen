@@ -1,4 +1,5 @@
 import React, { useState, ChangeEvent, MouseEvent, useEffect, useRef, CSSProperties } from "react";
+import Papa from 'papaparse';
 import pinyin from "pinyin";
 
 interface Phrase {
@@ -105,8 +106,25 @@ const EditableField: React.FC<{
   );
 };
 
-const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: Phrase[]) => void }> = ({ phrases, setPhrases }) => {
+const generateAndDownloadCSV = (phrases: Phrase[], cardType: 'Basic' | 'Cloze') => {
+  const csv = Papa.unparse(phrases.map(phrase => ({
+    "Front": phrase.original,
+    "Back": phrase.pinyin,
+    "Card Type": cardType,
+  })));
+  
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', `${new Date().toISOString().slice(0, 10)}--new-flashcards.anki${cardType.toLowerCase()}.csv`);
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
 
+const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: Phrase[]) => void }> = ({ phrases, setPhrases }) => {
   const handleTextChange = (index: number, field: 'original' | 'pinyin', value: string) => {
     const newPhrases = [...phrases];
     newPhrases[index][field] = value;
@@ -117,6 +135,32 @@ const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: Phrase[
     const newPhrases = [...phrases];
     newPhrases[index].cloze = checked;
     setPhrases(newPhrases);
+  }
+
+  const generateAndDownloadCSV = (phrases: Phrase[], cardType: 'basic' | 'cloze') => {
+    const csv = Papa.unparse(phrases.map(phrase => ({
+      "Front": phrase.original,
+      "Back": phrase.pinyin,
+      "Card Type": cardType,
+    })));
+    
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${new Date().toISOString().slice(0, 10)}--new-flashcards.anki${cardType}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  const handleExport = () => {
+    const clozePhrases = phrases.filter(phrase => phrase.cloze); 
+    generateAndDownloadCSV(clozePhrases, 'cloze');
+
+    const basicPhrases = phrases.filter(phrase => !phrase.cloze); 
+    generateAndDownloadCSV(basicPhrases, 'basic');
   }
 
   return (
@@ -133,13 +177,13 @@ const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: Phrase[
           <tbody>
             {phrases.map((phrase, index) => (
               <tr key={index}>
-                <td style={{ width: '45%', verticalAlign: 'top', textAlign: 'left' }}>
+                <td style={{ width: '40%', verticalAlign: 'top', textAlign: 'left' }}>
                   <EditableField value={phrase.original} onChange={value => handleTextChange(index, 'original', value)} />
                 </td>
-                <td style={{ width: '45%', verticalAlign: 'top', textAlign: 'left'  }}>
+                <td style={{ width: '40%', verticalAlign: 'top', textAlign: 'left'  }}>
                   <EditableField value={phrase.pinyin} onChange={value => handleTextChange(index, 'pinyin', value)} />
                 </td>
-                <td style={{ width: '10%' , verticalAlign: 'top', textAlign: 'center' }}>
+                <td style={{ width: '20%' , verticalAlign: 'top', textAlign: 'center' }}>
                   <input type="checkbox" style={{ margin: '1rem 2rem 2rem 1rem' }} checked={phrase.cloze} onChange={e => handleCheckboxChange(index, e.target.checked)} />
                 </td>
               </tr>
@@ -147,7 +191,7 @@ const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: Phrase[
           </tbody>
         </table>
       </div>
-      <button style={{ marginTop: '1em' }}>Export</button>
+      <button onClick={handleExport} style={{ marginTop: '1em' }}>Export</button>
     </div>
   );
 }
