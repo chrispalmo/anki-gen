@@ -1,2 +1,1 @@
 # anki-gen
-# anki-gen
