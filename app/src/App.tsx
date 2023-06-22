@@ -16,7 +16,7 @@ const StartPage: React.FC<{ setPhrases: (phrases: Phrase[]) => void }> = ({ setP
 
     const phrases = input.split("\n\n").map(phrase => ({
       original: phrase,
-      pinyin: pinyin(phrase, { heteronym: true }).flat().join(''),
+      pinyin: pinyin(phrase, { heteronym: true, segment: true }).flat().join(' '),
       cloze: false
     }));
 
