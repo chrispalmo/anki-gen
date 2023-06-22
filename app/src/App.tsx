@@ -13,15 +13,34 @@ const StartPage: React.FC<{ setPhrases: (phrases: Phrase[]) => void }> = ({ setP
 
   const handleSubmit = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-
-    const phrases = input.split("\n\n").map(phrase => ({
-      original: phrase,
-      pinyin: pinyin(phrase, { heteronym: true, segment: true }).flat().join(' '),
-      cloze: false
-    }));
-
+  
+    // A function to determine if a character is a Chinese character
+    const isChinese = (char: string) => /\p{Script=Han}/u.test(char);
+  
+    const phrases = input.split("\n\n").map(phrase => {
+      // Segment the input into Chinese phrases and non-Chinese words
+      let segments = phrase.split(/(\P{Script=Han}+)/gu);
+  
+      // Apply pinyin to the Chinese phrases
+      segments = segments.map(segment =>
+        isChinese(segment[0])
+          ? pinyin(segment, { heteronym: true, segment: true }).flat().join(' ')
+          : segment
+      );
+  
+      // Reconstruct the input
+      const reconstructed = segments.join('');
+  
+      return {
+        original: phrase,
+        pinyin: reconstructed,
+        cloze: false
+      };
+    });
+  
     setPhrases(phrases);
   }
+  
 
   return (
     <div style={{ padding: '1em', display: 'flex', flexDirection: 'column', height: 'calc(100vh - 2em)' }}>
@@ -184,7 +203,7 @@ const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: Phrase[
                   <EditableField value={phrase.pinyin} onChange={value => handleTextChange(index, 'pinyin', value)} />
                 </td>
                 <td style={{ width: '20%' , verticalAlign: 'top', textAlign: 'center' }}>
-                  <input type="checkbox" style={{ margin: '1rem 2rem 2rem 1rem' }} checked={phrase.cloze} onChange={e => handleCheckboxChange(index, e.target.checked)} />
+                  <input type="checkbox" style={{ margin: '1.5rem 2rem 2rem 1rem' }} checked={phrase.cloze} onChange={e => handleCheckboxChange(index, e.target.checked)} />
                 </td>
               </tr>
             ))}
