@@ -125,43 +125,24 @@ const EditableField: React.FC<{
   );
 };
 
-const generateAndDownloadCSV = (phrases: Phrase[], cardType: 'Basic' | 'Cloze') => {
-  const csv = Papa.unparse(phrases.map(phrase => ({
-    "Front": phrase.original,
-    "Back": phrase.pinyin,
-    "Card Type": cardType,
-  })));
-  
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.setAttribute('href', url);
-  link.setAttribute('download', `${new Date().toISOString().slice(0, 10)}--new-flashcards.anki${cardType.toLowerCase()}.csv`);
-  link.style.visibility = 'hidden';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
-
 const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: Phrase[]) => void }> = ({ phrases, setPhrases }) => {
   const handleTextChange = (index: number, field: 'original' | 'pinyin', value: string) => {
     const newPhrases = [...phrases];
     newPhrases[index][field] = value;
-    setPhrases(newPhrases);
-  }
-
-  const handleCheckboxChange = (index: number, checked: boolean) => {
-    const newPhrases = [...phrases];
-    newPhrases[index].cloze = checked;
+  
+    if (field === 'original') {
+      // Check for cloze deletion markers in the string (with optional hint)
+      newPhrases[index].cloze = /\{\{c\d+::[^}]+(::[^}]+)?\}\}/.test(value);
+    }
+  
     setPhrases(newPhrases);
   }
 
   const generateAndDownloadCSV = (phrases: Phrase[], cardType: 'basic' | 'cloze') => {
-    const csv = Papa.unparse(phrases.map(phrase => ({
-      "Front": phrase.original,
-      "Back": phrase.pinyin,
-      "Card Type": cardType,
-    })));
+    const csv = Papa.unparse(phrases.map(phrase => [
+      phrase.original,
+      phrase.pinyin,
+    ]));
     
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -203,7 +184,7 @@ const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: Phrase[
                   <EditableField value={phrase.pinyin} onChange={value => handleTextChange(index, 'pinyin', value)} />
                 </td>
                 <td style={{ width: '20%' , verticalAlign: 'top', textAlign: 'center' }}>
-                  <input type="checkbox" style={{ margin: '1.5rem 2rem 2rem 1rem' }} checked={phrase.cloze} onChange={e => handleCheckboxChange(index, e.target.checked)} />
+                  <input disabled type="checkbox" style={{ margin: '1.5rem 2rem 2rem 1rem' }} checked={phrase.cloze} />
                 </td>
               </tr>
             ))}
