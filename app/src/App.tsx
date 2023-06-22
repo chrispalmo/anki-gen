@@ -5,6 +5,7 @@ import pinyin from "pinyin";
 interface Phrase {
   original: string;
   pinyin: string;
+  extra: string;
   cloze: boolean;
 }
 
@@ -14,34 +15,40 @@ const StartPage: React.FC<{ setPhrases: (phrases: Phrase[]) => void }> = ({ setP
   const handleSubmit = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   
-    // A function to determine if a character is a Chinese character
     const isChinese = (char: string) => /\p{Script=Han}/u.test(char);
   
     const phrases = input.split("\n\n").map(phrase => {
-      // Segment the input into Chinese phrases and non-Chinese words
       let segments = phrase.split(/(\P{Script=Han}+)/gu);
   
-      // Apply pinyin to the Chinese phrases
-      segments = segments.map(segment =>
-        isChinese(segment[0])
+      segments = segments.map(segment => {
+        if (/\{\{c\d+::[^}]+(::[^}]+)?\}\}/.test(segment)) {
+          // If segment has cloze syntax, extract Chinese text, translate it and put it back into cloze syntax
+          const clozeMatch = segment.match(/\{\{c(\d+)::([^}]+)(::([^}]+))?\}\}/);
+          if (clozeMatch) {
+            const clozeNumber = clozeMatch[1];
+            const clozeChinese = clozeMatch[2];
+            const clozePinyin = pinyin(clozeChinese, { heteronym: true, segment: true }).flat().join(' ');
+            return `{{c${clozeNumber}::${clozePinyin}}}`;
+          }
+        }
+        return isChinese(segment[0])
           ? pinyin(segment, { heteronym: true, segment: true }).flat().join(' ')
-          : segment
-      );
+          : segment;
+      });
   
-      // Reconstruct the input
       const reconstructed = segments.join('');
   
       return {
         original: phrase,
         pinyin: reconstructed,
-        cloze: false
+        cloze: false,
+        extra: '',
       };
     });
   
     setPhrases(phrases);
-  }
+  };
   
-
   return (
     <div style={{ padding: '1em', display: 'flex', flexDirection: 'column', height: 'calc(100vh - 2em)' }}>
       <div style={{ textAlign: 'center' }}>
@@ -69,6 +76,7 @@ const EditableField: React.FC<{
     fontFamily: 'Arial, sans-serif',
     fontSize: '1rem',
     width: '100%',
+    height: '100%',
     padding: '0.1rem',
     margin: '1rem 2rem 1rem 2rem',
     border: '2px solid white',
@@ -81,6 +89,8 @@ const EditableField: React.FC<{
     paddingLeft: '0.09rem',
     resize: 'none',
     overflow: 'hidden',
+    width: '100%',
+    height: '100%',
   };
 
   useEffect(() => {
@@ -118,7 +128,9 @@ const EditableField: React.FC<{
   ) : (
     <div
       onClick={() => setIsEditing(true)}
-      style={{ ...sharedStyles, minHeight: '1em', whiteSpace: 'pre-wrap' }}
+      style={{ ...sharedStyles, minHeight: '1em', whiteSpace: 'pre-wrap', cursor: 'pointer' }}
+      onMouseEnter={e => (e.currentTarget.style.border = '1px solid silver')}
+      onMouseLeave={e => (e.currentTarget.style.border = '1px solid white')}
     >
       {divContent}
     </div>
@@ -126,23 +138,25 @@ const EditableField: React.FC<{
 };
 
 const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: Phrase[]) => void }> = ({ phrases, setPhrases }) => {
-  const handleTextChange = (index: number, field: 'original' | 'pinyin', value: string) => {
+  const handleTextChange = (index: number, field: 'original' | 'pinyin' | 'extra', value: string) => {
     const newPhrases = [...phrases];
     newPhrases[index][field] = value;
   
     if (field === 'original') {
-      // Check for cloze deletion markers in the string (with optional hint)
       newPhrases[index].cloze = /\{\{c\d+::[^}]+(::[^}]+)?\}\}/.test(value);
     }
   
     setPhrases(newPhrases);
   }
-
+  
   const generateAndDownloadCSV = (phrases: Phrase[], cardType: 'basic' | 'cloze') => {
-    const csv = Papa.unparse(phrases.map(phrase => [
-      phrase.original,
-      phrase.pinyin,
-    ]));
+    const csv = Papa.unparse(phrases.map(phrase => {
+      const back = `${phrase.pinyin}${phrase.extra ? '\n\n' : ''}${phrase.extra}` // append extra with two new lines if it's not empty
+      return [
+        phrase.original,
+        back,
+      ];
+    }));
     
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -171,19 +185,23 @@ const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: Phrase[
             <tr>
               <th>Front (Chinese)</th>
               <th>Back (Pinyin)</th>
+              <th>Back (Extra)</th>
               <th>Cloze?</th>
             </tr>
           </thead>
           <tbody>
             {phrases.map((phrase, index) => (
               <tr key={index}>
-                <td style={{ width: '40%', verticalAlign: 'top', textAlign: 'left' }}>
+                <td style={{ width: '28%', verticalAlign: 'top', textAlign: 'left' }}>
                   <EditableField value={phrase.original} onChange={value => handleTextChange(index, 'original', value)} />
                 </td>
-                <td style={{ width: '40%', verticalAlign: 'top', textAlign: 'left'  }}>
+                <td style={{ width: '28%', verticalAlign: 'top', textAlign: 'left'  }}>
                   <EditableField value={phrase.pinyin} onChange={value => handleTextChange(index, 'pinyin', value)} />
                 </td>
-                <td style={{ width: '20%' , verticalAlign: 'top', textAlign: 'center' }}>
+                <td style={{ width: '28%', verticalAlign: 'top', textAlign: 'left'  }}>
+                  <EditableField value={phrase.extra} onChange={value => handleTextChange(index, 'extra', value)} />
+                </td>
+                <td style={{ width: '16%' , verticalAlign: 'top', textAlign: 'center' }}>
                   <input disabled type="checkbox" style={{ margin: '1.5rem 2rem 2rem 1rem' }} checked={phrase.cloze} />
                 </td>
               </tr>
