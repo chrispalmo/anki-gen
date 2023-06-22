@@ -9,43 +9,45 @@ interface Phrase {
   cloze: boolean;
 }
 
+const translateChineseToPinyin = (input: string) => {
+  const segments = input.split(/(\P{Script=Han}+)/gu);
+
+  const translatedSegments = segments.map(segment => {
+    if (/\p{Script=Han}/u.test(segment)) {
+      return pinyin(segment, { heteronym: true, segment: true }).flat().join(' ');
+    } else {
+      return segment;
+    }
+  });
+
+  // Add spaces around non-Chinese segments
+  const spacedSegments = translatedSegments.map((segment, i, array) => {
+    if (!/\p{Script=Han}/u.test(segment)) {
+      const spaceBefore = i > 0 ? ' ' : '';
+      const spaceAfter = i < array.length - 1 ? ' ' : '';
+      return spaceBefore + segment + spaceAfter;
+    } else {
+      return segment;
+    }
+  });
+
+  return spacedSegments.join('');
+};
+
 const StartPage: React.FC<{ setPhrases: (phrases: Phrase[]) => void }> = ({ setPhrases }) => {
   const [input, setInput] = useState<string>("");
 
   const handleSubmit = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-  
-    const isChinese = (char: string) => /\p{Script=Han}/u.test(char);
-  
     const phrases = input.split("\n\n").map(phrase => {
-      let segments = phrase.split(/(\P{Script=Han}+)/gu);
-  
-      segments = segments.map(segment => {
-        if (/\{\{c\d+::[^}]+(::[^}]+)?\}\}/.test(segment)) {
-          // If segment has cloze syntax, extract Chinese text, translate it and put it back into cloze syntax
-          const clozeMatch = segment.match(/\{\{c(\d+)::([^}]+)(::([^}]+))?\}\}/);
-          if (clozeMatch) {
-            const clozeNumber = clozeMatch[1];
-            const clozeChinese = clozeMatch[2];
-            const clozePinyin = pinyin(clozeChinese, { heteronym: true, segment: true }).flat().join(' ');
-            return `{{c${clozeNumber}::${clozePinyin}}}`;
-          }
-        }
-        return isChinese(segment[0])
-          ? pinyin(segment, { heteronym: true, segment: true }).flat().join(' ')
-          : segment;
-      });
-  
-      const reconstructed = segments.join('');
-  
+      const pinyinText = translateChineseToPinyin(phrase);
       return {
         original: phrase,
-        pinyin: reconstructed,
+        pinyin: pinyinText,
         cloze: false,
         extra: '',
       };
     });
-  
     setPhrases(phrases);
   };
   
@@ -144,6 +146,7 @@ const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: Phrase[
   
     if (field === 'original') {
       newPhrases[index].cloze = /\{\{c\d+::[^}]+(::[^}]+)?\}\}/.test(value);
+      newPhrases[index].pinyin = translateChineseToPinyin(value);
     }
   
     setPhrases(newPhrases);
