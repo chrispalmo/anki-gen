@@ -146,7 +146,6 @@ const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: Phrase[
   
     if (field === 'original') {
       newPhrases[index].cloze = /\{\{c\d+::[^}]+(::[^}]+)?\}\}/.test(value);
-      newPhrases[index].pinyin = translateChineseToPinyin(value);
     }
   
     setPhrases(newPhrases);
