@@ -109,16 +109,6 @@ const EditableField: React.FC<{
     }
   }, [isEditing]);
 
-  const lines = value.split('\n');
-  const isLastLine = (i: number) => i === lines.length - 1;
-  const isSingleLineValue = (i: number) => lines.length === 1;
-  const divContent = lines.map((text, index) => (
-    <React.Fragment key={index}>
-      {text}
-      {isLastLine(index) && !isSingleLineValue ? <br /> : null}
-    </React.Fragment>
-  ));
-
   return isEditing ? (
     <textarea
       ref={textareaRef}
@@ -134,7 +124,13 @@ const EditableField: React.FC<{
       onMouseEnter={e => (e.currentTarget.style.border = '1px solid silver')}
       onMouseLeave={e => (e.currentTarget.style.border = '1px solid white')}
     >
-      {divContent}
+      {value.split('\n').length > 1 ? value : (
+        <>
+          {value}
+          <br/>
+          {' '}
+        </>
+      )}
     </div>
   );
 };
