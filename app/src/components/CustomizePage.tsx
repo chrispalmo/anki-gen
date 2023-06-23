@@ -42,6 +42,17 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
     generateAndDownloadCSV(basicPhrases, 'basic');
   }
 
+  const handleDelete = (index: number) => {
+    const newPhrases = [...phrases];
+    newPhrases.splice(index, 1);
+    setPhrases(newPhrases);
+  }
+
+  const handleAdd = () => {
+    const newPhrases = [...phrases, { original: '', pinyin: '', cloze: false, extra: '' }];
+    setPhrases(newPhrases);
+  }
+
   return (
     <div style={{ padding: '1em', height: 'calc(100vh - 2em)', display: 'flex', flexDirection: 'column' }}>
       <div style={{ overflow: 'auto', flexGrow: 1 }}>
@@ -54,25 +65,31 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
               <th>Cloze?</th>
             </tr>
           </thead>
-          <tbody>
-            {phrases.map((phrase, index) => (
-              <tr key={index}>
-                <td style={{ width: '28%', verticalAlign: 'top', textAlign: 'left' }}>
-                  <EditableField value={phrase.original} onChange={value => handleTextChange(index, 'original', value)} />
-                </td>
-                <td style={{ width: '28%', verticalAlign: 'top', textAlign: 'left'  }}>
-                  <EditableField value={phrase.pinyin} onChange={value => handleTextChange(index, 'pinyin', value)} />
-                </td>
-                <td style={{ width: '28%', verticalAlign: 'top', textAlign: 'left'  }}>
-                  <EditableField value={phrase.extra} onChange={value => handleTextChange(index, 'extra', value)} />
-                </td>
-                <td style={{ width: '16%' , verticalAlign: 'top', textAlign: 'center' }}>
-                  <input disabled type="checkbox" style={{ margin: '1.5rem 2rem 2rem 1rem' }} checked={phrase.cloze} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          <tbody> 
+          {phrases.map((phrase, index) => (
+            <tr key={index}>
+              <td style={{ width: '28%', verticalAlign: 'top', textAlign: 'left' }}>
+                <EditableField value={phrase.original} onChange={value => handleTextChange(index, 'original', value)} />
+              </td>
+              <td style={{ width: '28%', verticalAlign: 'top', textAlign: 'left'  }}>
+                <EditableField value={phrase.pinyin} onChange={value => handleTextChange(index, 'pinyin', value)} />
+               </td>
+              <td style={{ width: '28%', verticalAlign: 'top', textAlign: 'left'  }}>
+                <EditableField value={phrase.extra} onChange={value => handleTextChange(index, 'extra', value)} />
+              </td>
+              <td style={{ width: '10%' , verticalAlign: 'top', textAlign: 'center' }}>
+                <input disabled type="checkbox" style={{ margin: '1.5rem 2rem 2rem 1rem' }} checked={phrase.cloze} />
+              </td>
+              <td style={{ width: '6%' , verticalAlign: 'top', textAlign: 'center' }}>
+                <button onClick={() => handleDelete(index)} style={{ border: 'none', background: 'none', color: 'gray', margin: '1.5rem 2rem 2rem 1rem', cursor: 'pointer'}}>X</button>
+              </td>
+            </tr>
+          ))}
+          <tr>
+            <button onClick={handleAdd} style={{ marginTop: '1em' }}>+</button>
+          </tr>
+        </tbody>
+      </table>
       </div>
       <button onClick={handleExport} style={{ marginTop: '1em' }}>Export</button>
     </div>
