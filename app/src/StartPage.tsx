@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, MouseEvent } from "react";
-import { Phrase, translateChineseToPinyin } from "./utils";
+import { Phrase, translateChineseToPinyin } from "./components/utils";
 
 export const StartPage: React.FC<{ setPhrases: (phrases: Phrase[]) => void }> = ({ setPhrases }) => {
   const [input, setInput] = useState<string>("");
