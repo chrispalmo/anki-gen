@@ -1,6 +1,6 @@
 import Papa from "papaparse";
 import { EditableField } from "./EditableField";
-import { Phrase } from "./utils";
+import { Phrase, translateChineseToPinyin } from "./utils";
 
 export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: Phrase[]) => void }> = ({ phrases, setPhrases }) => {
   const handleTextChange = (index: number, field: 'original' | 'pinyin' | 'extra', value: string) => {
@@ -53,6 +53,12 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
     setPhrases(newPhrases);
   }
 
+  const handleRefresh = (index: number) => {
+    const newPhrases = [...phrases];
+    newPhrases[index].pinyin = translateChineseToPinyin(newPhrases[index].original);
+    setPhrases(newPhrases);
+  }
+
   return (
     <div style={{ padding: '1em', height: 'calc(100vh - 2em)', display: 'flex', flexDirection: 'column' }}>
       <div style={{ overflow: 'auto', flexGrow: 1 }}>
@@ -72,8 +78,11 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
                 <EditableField value={phrase.original} onChange={value => handleTextChange(index, 'original', value)} />
               </td>
               <td style={{ width: '28%', verticalAlign: 'top', textAlign: 'left'  }}>
-                <EditableField value={phrase.pinyin} onChange={value => handleTextChange(index, 'pinyin', value)} />
-               </td>
+                <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                  <EditableField value={phrase.pinyin} onChange={value => handleTextChange(index, 'pinyin', value)} />
+                  <button onClick={() => handleRefresh(index)} style={{ marginLeft: 0, background: 'none', border: 'none', color: 'gray' }}>🔄</button>
+                </div>
+              </td>
               <td style={{ width: '28%', verticalAlign: 'top', textAlign: 'left'  }}>
                 <EditableField value={phrase.extra} onChange={value => handleTextChange(index, 'extra', value)} />
               </td>
@@ -86,7 +95,9 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
             </tr>
           ))}
           <tr>
-            <button onClick={handleAdd} style={{ marginTop: '1em' }}>+</button>
+            <div style={{display: 'flex'}}>
+              <button onClick={handleAdd} style={{ margin: '1rem 0 0 2.25rem' }}>+</button>
+            </div>
           </tr>
         </tbody>
       </table>
