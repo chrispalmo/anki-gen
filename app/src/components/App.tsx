@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Phrase } from "./utils";
-import { CustomizePage } from "../CustomizePage";
-import { StartPage } from "../StartPage";
+import { CustomizePage } from "./CustomizePage";
+import { StartPage } from "./StartPage";
 
 const App: React.FC = () => {
   const [phrases, setPhrases] = useState<Phrase[] | null>(null);

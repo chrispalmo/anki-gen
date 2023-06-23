@@ -1,6 +1,6 @@
 import Papa from "papaparse";
-import { EditableField } from "./components/EditableField";
-import { Phrase } from "./components/utils";
+import { EditableField } from "./EditableField";
+import { Phrase } from "./utils";
 
 export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: Phrase[]) => void }> = ({ phrases, setPhrases }) => {
   const handleTextChange = (index: number, field: 'original' | 'pinyin' | 'extra', value: string) => {
