@@ -74,35 +74,37 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
           <tbody> 
           {phrases.map((phrase, index) => (
             <tr key={index}>
-              <td style={{ width: '28%', verticalAlign: 'top', textAlign: 'left' }}>
-                <EditableField value={phrase.original} onChange={value => handleTextChange(index, 'original', value)} />
-              </td>
-              <td style={{ width: '28%', verticalAlign: 'top', textAlign: 'left'  }}>
+              <td style={{ width: '30%', verticalAlign: 'top', textAlign: 'left' }}>
                 <div style={{ display: 'flex', alignItems: 'baseline' }}>
-                  <EditableField value={phrase.pinyin} onChange={value => handleTextChange(index, 'pinyin', value)} />
-                  <button onClick={() => handleRefresh(index)} style={{ marginLeft: 0, background: 'none', border: 'none', color: 'gray' }}>🔄</button>
+                  <EditableField value={phrase.original} onChange={value => handleTextChange(index, 'original', value)} />
                 </div>
               </td>
-              <td style={{ width: '28%', verticalAlign: 'top', textAlign: 'left'  }}>
+              <td style={{ width: '30%', verticalAlign: 'top', textAlign: 'left'  }}>
+                <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                  <EditableField value={phrase.pinyin} onChange={value => handleTextChange(index, 'pinyin', value)} />
+                  <div onClick={() => handleRefresh(index)} style={{ background: 'none', border: 'none', marginLeft: '1rem', cursor: 'pointer' }}>🔄</div>
+                </div>
+              </td>
+              <td style={{ width: '30%', verticalAlign: 'top', textAlign: 'left'  }}>
                 <EditableField value={phrase.extra} onChange={value => handleTextChange(index, 'extra', value)} />
               </td>
-              <td style={{ width: '10%' , verticalAlign: 'top', textAlign: 'center' }}>
-                <input disabled type="checkbox" style={{ margin: '1.5rem 2rem 2rem 1rem' }} checked={phrase.cloze} />
+              <td style={{ width: '5%' , verticalAlign: 'top', textAlign: 'center' }}>
+                <input disabled type="checkbox" checked={phrase.cloze} />
               </td>
-              <td style={{ width: '6%' , verticalAlign: 'top', textAlign: 'center' }}>
-                <button onClick={() => handleDelete(index)} style={{ border: 'none', background: 'none', color: 'gray', margin: '1.5rem 2rem 2rem 1rem', cursor: 'pointer'}}>X</button>
+              <td style={{ width: '5%' , verticalAlign: 'top', textAlign: 'center' }}>
+                <div onClick={() => handleDelete(index)} style={{ border: 'none', background: 'none', color: 'gray', cursor: 'pointer'}}>X</div>
               </td>
             </tr>
           ))}
           <tr>
             <div style={{display: 'flex'}}>
-              <button onClick={handleAdd} style={{ margin: '1rem 0 0 2.25rem' }}>+</button>
+              <button onClick={handleAdd}>+</button>
             </div>
           </tr>
         </tbody>
       </table>
       </div>
-      <button onClick={handleExport} style={{ marginTop: '1em' }}>Export</button>
+      <button onClick={handleExport}>Export</button>
     </div>
   );
 }

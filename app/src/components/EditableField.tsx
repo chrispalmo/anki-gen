@@ -13,8 +13,6 @@ export const EditableField: React.FC<{
     width: '100%',
     height: '100%',
     padding: '0.1rem',
-    margin: '1rem 2rem 1rem 2rem',
-    border: '2px solid white',
     textAlign: 'left',
   };
 
@@ -54,8 +52,8 @@ export const EditableField: React.FC<{
     <div
       onClick={() => setIsEditing(true)}
       style={{ ...sharedStyles, minHeight: '1em', whiteSpace: 'pre-wrap', cursor: 'pointer' }}
-      onMouseEnter={e => (e.currentTarget.style.border = '1px solid silver')}
-      onMouseLeave={e => (e.currentTarget.style.border = '1px solid white')}
+      onMouseEnter={e => (e.currentTarget.style.background = '#383838')}
+      onMouseLeave={e => (e.currentTarget.style.background = 'none')}
     >
       {value.split('\n').length > 1 ? value : (
         <>
