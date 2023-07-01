@@ -1,0 +1,6 @@
+# todo
+
+1. bugfix - cards with any empty field are not exported (at least for the pinyin and extra fields, unsure about others).
+2. tweak pinyin settings so rare pronunciations are ignored.
+3. change export button text to read "Export (X cloze + Y basic cards).
+4. don't export empty file.
