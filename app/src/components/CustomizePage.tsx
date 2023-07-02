@@ -37,7 +37,6 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
   const handleExport = () => {
     const clozePhrases = phrases.filter(phrase => phrase.cloze); 
     generateAndDownloadCSV(clozePhrases, 'cloze');
-
     const basicPhrases = phrases.filter(phrase => !phrase.cloze); 
     generateAndDownloadCSV(basicPhrases, 'basic');
   }
@@ -58,6 +57,9 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
     newPhrases[index].pinyin = translateChineseToPinyin(newPhrases[index].original);
     setPhrases(newPhrases);
   }
+
+  const clozeCardCount = phrases.filter(phrase => phrase.cloze).length;
+  const basicCardCount = phrases.filter(phrase => !phrase.cloze).length;
 
   return (
     <div style={{ padding: '1em', height: 'calc(100vh - 2em)', display: 'flex', flexDirection: 'column' }}>
@@ -104,7 +106,7 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
         </tbody>
       </table>
       </div>
-      <button onClick={handleExport}>Export</button>
+      <button onClick={handleExport}>Export ({clozeCardCount} cloze + {basicCardCount} basic cards)</button>
     </div>
   );
 }

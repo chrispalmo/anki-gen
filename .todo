@@ -1,5 +1,4 @@
 # todo
 
-1. tweak pinyin settings so rare pronunciations are ignored.
-2. change export button text to read "Export (X cloze + Y basic cards).
-3. don't export empty file.
+1. change export button text to read "Export (X cloze + Y basic cards).
+2. don't export empty file.
