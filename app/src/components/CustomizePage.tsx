@@ -18,11 +18,11 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
     const csv = Papa.unparse(phrases.map(phrase => {
       const back = `${phrase.pinyin}${phrase.extra ? '\n\n' : ''}${phrase.extra}` // append extra with two new lines if it's not empty
       return [
-        phrase.original,
-        back,
+        phrase.original || '""',
+        back || '""',
       ];
     }));
-    
+
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
