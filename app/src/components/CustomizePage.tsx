@@ -36,10 +36,16 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
 
   const handleExport = () => {
     const clozePhrases = phrases.filter(phrase => phrase.cloze); 
-    generateAndDownloadCSV(clozePhrases, 'cloze');
+    if (clozePhrases.length > 0) {
+      generateAndDownloadCSV(clozePhrases, 'cloze');
+    }
+    
     const basicPhrases = phrases.filter(phrase => !phrase.cloze); 
-    generateAndDownloadCSV(basicPhrases, 'basic');
+    if (basicPhrases.length > 0) {
+      generateAndDownloadCSV(basicPhrases, 'basic');
+    }
   }
+  
 
   const handleDelete = (index: number) => {
     const newPhrases = [...phrases];
