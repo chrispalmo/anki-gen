@@ -1,4 +1,24 @@
-import { CSSProperties, useEffect, useRef, useState } from "react";
+import { CSSProperties, useCallback, useEffect, useRef, useState } from "react";
+
+const sharedStyles: CSSProperties = {
+  fontFamily: 'Arial, sans-serif',
+  fontSize: '1rem',
+  width: '100%',
+  height: '100%',
+  padding: '0.1rem',
+  textAlign: 'left',
+};
+
+const textareaStyles: CSSProperties = {
+  ...sharedStyles,
+  paddingTop: '0.08rem',
+  paddingLeft: '0.09rem',
+  resize: 'none',
+  overflow: 'hidden',
+  width: '100%',
+  height: '100%',
+};
+
 
 export const EditableField: React.FC<{
   value: string;
@@ -7,24 +27,38 @@ export const EditableField: React.FC<{
   const [isEditing, setIsEditing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const sharedStyles: CSSProperties = {
-    fontFamily: 'Arial, sans-serif',
-    fontSize: '1rem',
-    width: '100%',
-    height: '100%',
-    padding: '0.1rem',
-    textAlign: 'left',
-  };
+  // additional function for creating cloze deletions
+  const createClozeDeletion = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.shiftKey && event.code === 'KeyC') {
+        event.preventDefault();
+        navigator.clipboard.readText().then(clipText => {
+          const textArea = textareaRef.current;
+          if (!textArea) return;
+          const start = textArea.selectionStart;
+          const end = textArea.selectionEnd;
+          const selectedText = textArea.value.slice(start, end);
+          const clozeText = `{{c1::${selectedText}::${clipText}}}`;
+          const newValue =
+            textArea.value.slice(0, start) +
+            clozeText +
+            textArea.value.slice(end);
+          onChange(newValue);
+        });
+      }
+    },
+    [onChange]
+  );
 
-  const textareaStyles: CSSProperties = {
-    ...sharedStyles,
-    paddingTop: '0.08rem',
-    paddingLeft: '0.09rem',
-    resize: 'none',
-    overflow: 'hidden',
-    width: '100%',
-    height: '100%',
-  };
+  useEffect(() => {
+    if (isEditing) {
+      textareaRef.current?.focus();
+      document.addEventListener('keydown', createClozeDeletion);
+    } else {
+      document.removeEventListener('keydown', createClozeDeletion);
+    }
+    return () => document.removeEventListener('keydown', createClozeDeletion);
+  }, [isEditing, createClozeDeletion]);
 
   useEffect(() => {
     if (isEditing) {
