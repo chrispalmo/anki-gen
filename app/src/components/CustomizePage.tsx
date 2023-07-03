@@ -96,8 +96,8 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
               <td style={{ width: '30%', verticalAlign: 'top', textAlign: 'left'  }}>
                 <EditableField value={phrase.extra} onChange={value => handleTextChange(index, 'extra', value)} />
               </td>
-              <td style={{ width: '5%' , verticalAlign: 'top', textAlign: 'center' }}>
-                <input disabled type="checkbox" checked={phrase.cloze} />
+              <td style={{ width: '10%' , verticalAlign: 'top', textAlign: 'center' }}>
+                {phrase.cloze ? "✅" : ""}
               </td>
               <td style={{ width: '5%' , verticalAlign: 'top', textAlign: 'center' }}>
                 <div onClick={() => handleDelete(index)} style={{ border: 'none', background: 'none', color: 'gray', cursor: 'pointer'}}>X</div>

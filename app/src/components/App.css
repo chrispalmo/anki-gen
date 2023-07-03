@@ -17,7 +17,7 @@ button:hover {
   background-color: #383838;
 }
 
-textarea, input[type="checkbox"] {
+textarea {
   background-color: #333;
   color: white;
   border: none;
