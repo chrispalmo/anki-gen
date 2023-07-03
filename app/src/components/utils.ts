@@ -6,7 +6,7 @@ export interface Phrase {
   original: string;
   pinyin: string;
   extra: string;
-  cloze: boolean;
+  cloze: number;
 }
 
 export const translateChineseToPinyin = (input: string) => {

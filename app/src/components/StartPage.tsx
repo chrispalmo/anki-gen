@@ -11,7 +11,7 @@ export const StartPage: React.FC<{ setPhrases: (phrases: Phrase[]) => void }> = 
       return {
         original: phrase,
         pinyin: pinyinText,
-        cloze: false,
+        cloze: 0,
         extra: '',
       };
     });

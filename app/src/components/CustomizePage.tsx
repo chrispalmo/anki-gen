@@ -6,11 +6,10 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
   const handleTextChange = (index: number, field: 'original' | 'pinyin' | 'extra', value: string) => {
     const newPhrases = [...phrases];
     newPhrases[index][field] = value;
-  
     if (field === 'original') {
-      newPhrases[index].cloze = /\{\{c\d+::[^}]+(::[^}]+)?\}\}/.test(value);
+      const matches = value.match(/\{\{c\d+::[^}]+(::[^}]+)?\}\}/g) || [];
+      newPhrases[index].cloze = matches.length;
     }
-  
     setPhrases(newPhrases);
   }
   
@@ -54,7 +53,7 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
   }
 
   const handleAdd = () => {
-    const newPhrases = [...phrases, { original: '', pinyin: '', cloze: false, extra: '' }];
+    const newPhrases = [...phrases, { original: '', pinyin: '', cloze: 0, extra: '' }];
     setPhrases(newPhrases);
   }
 
@@ -97,7 +96,7 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
                 <EditableField value={phrase.extra} onChange={value => handleTextChange(index, 'extra', value)} />
               </td>
               <td style={{ width: '10%' , verticalAlign: 'top', textAlign: 'center' }}>
-                {phrase.cloze ? "✅" : ""}
+                {'✅'.repeat(phrase.cloze)}
               </td>
               <td style={{ width: '5%' , verticalAlign: 'top', textAlign: 'center' }}>
                 <div onClick={() => handleDelete(index)} style={{ border: 'none', background: 'none', color: 'gray', cursor: 'pointer'}}>X</div>
