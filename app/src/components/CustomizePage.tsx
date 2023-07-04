@@ -1,9 +1,12 @@
 import Papa from "papaparse";
 import { EditableField } from "./EditableField";
 import { Phrase, translateChineseToPinyin } from "./utils";
+import { useCallback, useEffect, useState } from "react";
 
 export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: Phrase[]) => void }> = ({ phrases, setPhrases }) => {
-  const handleTextChange = (index: number, field: 'original' | 'pinyin' | 'extra', value: string) => {
+  const [hoveredIndex, setHoveredIndex] = useState<null | number>(null);
+
+  const handleTextChange = useCallback((index: number, field: 'original' | 'pinyin' | 'extra', value: string) => {
     const newPhrases = [...phrases];
     newPhrases[index][field] = value;
     if (field === 'original') {
@@ -11,7 +14,28 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
       newPhrases[index].cloze = matches.length;
     }
     setPhrases(newPhrases);
-  }
+  },[phrases, setPhrases])
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.altKey && event.shiftKey && event.code === 'KeyD') {
+        event.preventDefault();
+        if (hoveredIndex !== null) {
+          navigator.clipboard.readText().then((clipText) => {
+            const trimmedClipText = clipText.trim();
+            handleTextChange(hoveredIndex, 'extra', (phrases[hoveredIndex].extra + '\n\n' + trimmedClipText).trim());
+          });
+        }
+      }
+    };
+  
+    window.addEventListener('keydown', handleKeyDown);
+  
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [hoveredIndex, phrases, handleTextChange]);
+
   
   const generateAndDownloadCSV = (phrases: Phrase[], cardType: 'basic' | 'cloze') => {
     const csv = Papa.unparse(phrases.map(phrase => {
@@ -80,7 +104,11 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
           </thead>
           <tbody> 
           {phrases.map((phrase, index) => (
-            <tr key={index}>
+            <tr 
+              key={index}
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
               <td style={{ width: '30%', verticalAlign: 'top', textAlign: 'left' }}>
                 <div style={{ display: 'flex', alignItems: 'baseline' }}>
                   <EditableField value={phrase.original} onChange={value => handleTextChange(index, 'original', value)} />
