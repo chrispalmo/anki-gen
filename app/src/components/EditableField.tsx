@@ -30,7 +30,7 @@ export const EditableField: React.FC<{
   // additional function for creating cloze deletions
   const createClozeDeletion = useCallback(
     (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.shiftKey && event.code === 'KeyC') {
+      if (event.altKey && event.shiftKey && event.code === 'KeyC') {
         event.preventDefault();
         navigator.clipboard.readText().then(clipText => {
           const textArea = textareaRef.current;

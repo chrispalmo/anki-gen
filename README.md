@@ -23,7 +23,7 @@ Anki-gen is a simple, web-based tool for creating Anki flashcards. It's primaril
 
 ## Cloze Deletions
 
-Create cloze deletions by selecting text in the "Front (Chinese)" field, and pressing `Ctrl+Shift+C`. The selected text will be replaced with a cloze deletion, with any copied text contained in the system clipboard being used as the hint.
+Create cloze deletions by selecting text in the "Front (Chinese)" field, and pressing `Alt+Shift+C` / `Opt+Shift+C`. The selected text will be replaced with a cloze deletion, with any copied text contained in the system clipboard being used as the hint.
 
 ## Development
 
