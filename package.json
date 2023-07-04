@@ -1,0 +1,12 @@
+{
+  "name": "anki-gen",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:chrispalmo/anki-gen.git",
+  "author": "chrispalmo <34981948+chrispalmo@users.noreply.github.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "cd app && yarn start"
+}
+
+}
