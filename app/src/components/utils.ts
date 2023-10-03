@@ -10,9 +10,16 @@ export interface Phrase {
 }
 
 export const translateChineseToPinyin = (input: string) => {
-  return pinyin(input, {
-    heteronym: false, 
-    segment: "segmentit",
-    group: true
-  }).flat().join(' ');
+  const lines = input.split(/\r\n|\r|\n/);
+  let output: string[] = []
+  lines.forEach((line) => {
+    output.push(
+      pinyin(line, {
+        heteronym: false, 
+        segment: "segmentit",
+        group: true
+      }).flat().join(' ')
+    )
+  })
+  return output.join('\n');
 };
