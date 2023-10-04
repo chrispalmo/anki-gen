@@ -107,7 +107,9 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
             <tr 
               key={index}
               onMouseEnter={() => setHoveredIndex(index)}
+              onFocus={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
+              onBlur={() => setHoveredIndex(null)}
             >
               <td style={{ width: '30%', verticalAlign: 'top', textAlign: 'left' }}>
                 <div style={{ display: 'flex', alignItems: 'baseline' }}>
@@ -117,7 +119,12 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
               <td style={{ width: '30%', verticalAlign: 'top', textAlign: 'left'  }}>
                 <div style={{ display: 'flex', alignItems: 'baseline' }}>
                   <EditableField value={phrase.pinyin} onChange={value => handleTextChange(index, 'pinyin', value)} />
-                  <div onClick={() => handleRefresh(index)} style={{ background: 'none', border: 'none', marginLeft: '1rem', cursor: 'pointer' }}>🔄</div>
+                  <div
+                    onClick={() => handleRefresh(index)} style={{ background: 'none', border: 'none', marginLeft: '1rem', cursor: 'pointer' }}
+                    tabIndex={0}
+                  >
+                    🔄
+                  </div>
                 </div>
               </td>
               <td style={{ width: '30%', verticalAlign: 'top', textAlign: 'left'  }}>

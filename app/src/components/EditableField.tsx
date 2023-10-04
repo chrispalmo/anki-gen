@@ -19,6 +19,12 @@ const textareaStyles: CSSProperties = {
   height: '100%',
 };
 
+const defaultDivStyles: CSSProperties = {
+  ...sharedStyles,
+  minHeight: '1em',
+  whiteSpace: 'pre-wrap',
+  cursor: 'pointer'
+}
 
 export const EditableField: React.FC<{
   value: string;
@@ -66,6 +72,7 @@ export const EditableField: React.FC<{
       const tx = textareaRef.current;
       tx?.addEventListener('input', autoResize, false);
       autoResize();
+      setNormalStyle();
     }
 
     function autoResize() {
@@ -73,6 +80,26 @@ export const EditableField: React.FC<{
       textareaRef.current!.style.height = textareaRef.current!.scrollHeight + 'px';
     }
   }, [isEditing, value]);
+
+  const [extraStyles, setExtraStyles] = useState<CSSProperties>({background: 'none'});
+
+  const setHoveredStyle = () => setExtraStyles({background: '#383838'})
+  const setNormalStyle = () => setExtraStyles({ background: 'none' })
+
+  // reset styles when tab key is pressed
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.code === 'Tab') {
+        setNormalStyle();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    }
+  })
 
   return isEditing ? (
     <textarea
@@ -84,10 +111,15 @@ export const EditableField: React.FC<{
     />
   ) : (
     <div
-      onClick={() => setIsEditing(true)}
-      style={{ ...sharedStyles, minHeight: '1em', whiteSpace: 'pre-wrap', cursor: 'pointer' }}
-      onMouseEnter={e => (e.currentTarget.style.background = '#383838')}
-      onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+      onFocus={() => {
+        setIsEditing(true);
+        setHoveredStyle();
+      }}
+      onBlur={setNormalStyle}
+      style={{...defaultDivStyles, ...extraStyles}}
+      onMouseEnter={setHoveredStyle}
+      onMouseLeave={setNormalStyle}
+      tabIndex={0}
     >
       {value.split('\n').length > 1 ? value : (
         <>
