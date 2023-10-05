@@ -108,8 +108,6 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
               key={index}
               onMouseEnter={() => setHoveredIndex(index)}
               onFocus={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
-              onBlur={() => setHoveredIndex(null)}
             >
               <td style={{ width: '30%', verticalAlign: 'top', textAlign: 'left' }}>
                 <div style={{ display: 'flex', alignItems: 'baseline' }}>
