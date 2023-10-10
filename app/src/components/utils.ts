@@ -49,7 +49,14 @@ export const translateChineseToPinyin = (input: string): string => {
     if (segment === '\n') {
       return segment; // Return newlines unchanged
     } else if (isChineseCharacter(segment[0])) {
-      return pinyin(segment, { heteronym: true }).flat().join(' ') + ' ';
+      return pinyin(
+        segment,
+        {
+          // segment: "segmentit", 
+          group: true
+        })
+        .flat()
+        .join(' ') + ' ';
     }
     return segment + ' '; // Return non-Chinese segments unchanged
   });
