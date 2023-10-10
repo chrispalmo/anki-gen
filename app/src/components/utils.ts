@@ -52,7 +52,7 @@ export const translateChineseToPinyin = (input: string): string => {
       return pinyin(
         segment,
         {
-          // segment: "segmentit", 
+          segment: "segmentit", 
           group: true
         })
         .flat()
