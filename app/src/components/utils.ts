@@ -10,7 +10,7 @@ export interface Phrase {
 }
 
 const isChineseCharacter = (ch: string): boolean => {
-  const code = ch.charCodeAt(0);
+  const code = ch?.charCodeAt(0);
   return (code >= 0x4E00 && code <= 0x9FFF) || (code >= 0x3400 && code <= 0x4DBF);
 }
 
