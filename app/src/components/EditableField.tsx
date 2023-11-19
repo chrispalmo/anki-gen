@@ -29,7 +29,8 @@ const defaultDivStyles: CSSProperties = {
 export const EditableField: React.FC<{
   value: string;
   onChange: (value: string) => void;
-}> = ({ value, onChange }) => {
+  onSave: () => void;
+}> = ({ value, onChange, onSave }) => {
   const [isEditing, setIsEditing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -106,8 +107,14 @@ export const EditableField: React.FC<{
       ref={textareaRef}
       style={textareaStyles}
       value={value}
-      onBlur={() => setIsEditing(false)}
-      onChange={e => onChange(e.target.value)}
+      onBlur={() => {
+        setIsEditing(false);
+        onSave();
+      }}
+      onChange={e => {
+        onChange(e.target.value);
+        onSave();
+      }}
     />
   ) : (
     <div

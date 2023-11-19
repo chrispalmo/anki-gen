@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent, MouseEvent } from "react";
 import { Phrase, translateChineseToPinyin } from "./utils";
 
-export const StartPage: React.FC<{ setPhrases: (phrases: Phrase[]) => void }> = ({ setPhrases }) => {
+export const StartPage: React.FC<{ setPhrases: (phrases: Phrase[]) => void; loadPhrases: () => void }> = ({ setPhrases, loadPhrases }) => {
   const [input, setInput] = useState<string>("");
 
   const handleSubmit = (event: MouseEvent<HTMLButtonElement>) => {
@@ -30,6 +30,7 @@ export const StartPage: React.FC<{ setPhrases: (phrases: Phrase[]) => void }> = 
         style={{ flexGrow: 1, marginBottom: '1em', width: '100%', overflow: 'auto' }} 
       />
       <button onClick={handleSubmit} style={{ alignSelf: 'center' }}>Continue</button>
+      <button onClick={loadPhrases} style={{ alignSelf: 'center' }}>Restore previous session</button>
     </div>
   );
 }

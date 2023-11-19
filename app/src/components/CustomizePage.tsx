@@ -3,7 +3,11 @@ import { EditableField } from "./EditableField";
 import { Phrase, translateChineseToPinyin } from "./utils";
 import { useCallback, useEffect, useState } from "react";
 
-export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: Phrase[]) => void }> = ({ phrases, setPhrases }) => {
+export const CustomizePage: React.FC<{ 
+  phrases: Phrase[]; 
+  setPhrases: (phrases: Phrase[]) => void; 
+  savePhrasesToLocalStorage: () => void;
+}> = ({ phrases, setPhrases, savePhrasesToLocalStorage }) => {
   const [hoveredIndex, setHoveredIndex] = useState<null | number>(null);
 
   const handleTextChange = useCallback((index: number, field: 'original' | 'pinyin' | 'extra', value: string) => {
@@ -111,12 +115,20 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
             >
               <td style={{ width: '30%', verticalAlign: 'top', textAlign: 'left' }}>
                 <div style={{ display: 'flex', alignItems: 'baseline' }}>
-                  <EditableField value={phrase.original} onChange={value => handleTextChange(index, 'original', value)} />
+                <EditableField
+                  value={phrase.original}
+                  onChange={value => handleTextChange(index, 'original', value)}
+                  onSave={savePhrasesToLocalStorage} 
+                />
                 </div>
               </td>
               <td style={{ width: '30%', verticalAlign: 'top', textAlign: 'left'  }}>
                 <div style={{ display: 'flex', alignItems: 'baseline' }}>
-                  <EditableField value={phrase.pinyin} onChange={value => handleTextChange(index, 'pinyin', value)} />
+                <EditableField
+                  value={phrase.pinyin}
+                  onChange={value => handleTextChange(index, 'pinyin', value)}
+                  onSave={savePhrasesToLocalStorage} 
+                />
                   <div
                     onClick={() => handleRefresh(index)} style={{ background: 'none', border: 'none', marginLeft: '1rem', cursor: 'pointer' }}
                     tabIndex={0}
@@ -126,7 +138,11 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
                 </div>
               </td>
               <td style={{ width: '30%', verticalAlign: 'top', textAlign: 'left'  }}>
-                <EditableField value={phrase.extra} onChange={value => handleTextChange(index, 'extra', value)} />
+                <EditableField
+                  value={phrase.extra}
+                  onChange={value => handleTextChange(index, 'extra', value)}
+                  onSave={savePhrasesToLocalStorage} 
+                />
               </td>
               <td style={{ width: '10%' , verticalAlign: 'top', textAlign: 'center' }}>
                 {'✅'.repeat(phrase.cloze)}
@@ -145,6 +161,7 @@ export const CustomizePage: React.FC<{ phrases: Phrase[]; setPhrases: (phrases: 
       </table>
       </div>
       <button onClick={handleExport}>Export ({clozeCardCount} cloze + {basicCardCount} basic cards)</button>
+      <button onClick={savePhrasesToLocalStorage}>Save</button>
     </div>
   );
 }
