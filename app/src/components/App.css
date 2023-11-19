@@ -17,6 +17,11 @@ button:hover {
   background-color: #383838;
 }
 
+.customize-button {
+  max-width: max-content;
+  align-self: center;
+}
+
 textarea {
   background-color: #333;
   color: white;

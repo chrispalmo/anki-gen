@@ -160,8 +160,8 @@ export const CustomizePage: React.FC<{
         </tbody>
       </table>
       </div>
-      <button onClick={handleExport}>Export ({clozeCardCount} cloze + {basicCardCount} basic cards)</button>
-      <button onClick={savePhrasesToLocalStorage}>Save</button>
+      <button className="customize-button" onClick={handleExport}>Export ({clozeCardCount} cloze + {basicCardCount} basic cards)</button>
+      <button className="customize-button" onClick={savePhrasesToLocalStorage}>Save</button>
     </div>
   );
 }
