@@ -1,36 +1,57 @@
 import React, { useState, ChangeEvent, MouseEvent } from "react";
 import { Phrase, translateChineseToPinyin } from "./utils";
 
-export const StartPage: React.FC<{ setPhrases: (phrases: Phrase[]) => void; loadPhrases: () => void }> = ({ setPhrases, loadPhrases }) => {
+export const StartPage: React.FC<{
+  setPhrases: (phrases: Phrase[]) => void;
+  loadPhrases: () => void;
+}> = ({ setPhrases, loadPhrases }) => {
   const [input, setInput] = useState<string>("");
 
   const handleSubmit = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    const phrases = input.split("\n\n").map(phrase => {
+    const phrases = input.split("\n\n").map((phrase) => {
       const pinyinText = translateChineseToPinyin(phrase);
       return {
         original: phrase,
         pinyin: pinyinText,
         cloze: 0,
-        extra: '',
+        extra: "",
       };
     });
     setPhrases(phrases);
   };
-  
+
   return (
-    <div style={{ padding: '1em', display: 'flex', flexDirection: 'column', height: 'calc(100vh - 2em)' }}>
-      <div style={{ textAlign: 'center' }}>
+    <div
+      style={{
+        padding: "1em",
+        display: "flex",
+        flexDirection: "column",
+        height: "calc(100vh - 2em)",
+      }}
+    >
+      <div style={{ textAlign: "center" }}>
         <h1 style={{ margin: 0 }}>Enter Chinese phrases</h1>
         <p>Separate each phrase by two new lines (i.e press return twice)</p>
       </div>
-      <textarea 
-        value={input} 
-        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setInput(e.target.value)}
-        style={{ flexGrow: 1, marginBottom: '1em', width: '100%', overflow: 'auto' }} 
+      <textarea
+        value={input}
+        onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+          setInput(e.target.value)
+        }
+        style={{
+          flexGrow: 1,
+          marginBottom: "1em",
+          width: "100%",
+          overflow: "auto",
+        }}
       />
-      <button onClick={handleSubmit} style={{ alignSelf: 'center' }}>Continue</button>
-      <button onClick={loadPhrases} style={{ alignSelf: 'center' }}>Restore previous session</button>
+      <button onClick={handleSubmit} style={{ alignSelf: "center" }}>
+        Continue
+      </button>
+      <button onClick={loadPhrases} style={{ alignSelf: "center" }}>
+        Restore previous session
+      </button>
     </div>
   );
-}
+};

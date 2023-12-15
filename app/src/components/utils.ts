@@ -1,6 +1,6 @@
 import pinyin from "pinyin";
 
-export const LOCAL_STORAGE_KEY = 'anki_flashcards_app_data';
+export const LOCAL_STORAGE_KEY = "anki_flashcards_app_data";
 
 export interface Phrase {
   original: string;
@@ -11,8 +11,10 @@ export interface Phrase {
 
 const isChineseCharacter = (ch: string): boolean => {
   const code = ch?.charCodeAt(0);
-  return (code >= 0x4E00 && code <= 0x9FFF) || (code >= 0x3400 && code <= 0x4DBF);
-}
+  return (
+    (code >= 0x4e00 && code <= 0x9fff) || (code >= 0x3400 && code <= 0x4dbf)
+  );
+};
 
 export const translateChineseToPinyin = (input: string): string => {
   // Split the string into segments of Chinese, non-Chinese characters, and newlines
@@ -21,7 +23,8 @@ export const translateChineseToPinyin = (input: string): string => {
   let previousWasChinese = isChineseCharacter(input[0]);
 
   for (const char of input) {
-    if (char === '\n') { // Always split on newline
+    if (char === "\n") {
+      // Always split on newline
       if (currentSegment) {
         segments.push(currentSegment);
       }
@@ -29,7 +32,7 @@ export const translateChineseToPinyin = (input: string): string => {
       currentSegment = "";
       continue;
     }
-    
+
     const isChinese = isChineseCharacter(char);
     if (isChinese !== previousWasChinese) {
       segments.push(currentSegment);
@@ -45,22 +48,22 @@ export const translateChineseToPinyin = (input: string): string => {
   }
 
   // Convert only the Chinese segments to Pinyin
-  const translatedSegments = segments.map(segment => {
-    if (segment === '\n') {
+  const translatedSegments = segments.map((segment) => {
+    if (segment === "\n") {
       return segment; // Return newlines unchanged
     } else if (isChineseCharacter(segment[0])) {
-      return pinyin(
-        segment,
-        {
-          segment: "segmentit", 
-          group: true
+      return (
+        pinyin(segment, {
+          segment: "segmentit",
+          group: true,
         })
-        .flat()
-        .join(' ') + ' ';
+          .flat()
+          .join(" ") + " "
+      );
     }
-    return segment + ' '; // Return non-Chinese segments unchanged
+    return segment + " "; // Return non-Chinese segments unchanged
   });
 
   // Re-assemble and return the full string
-  return translatedSegments.join('');
-}
+  return translatedSegments.join("");
+};
