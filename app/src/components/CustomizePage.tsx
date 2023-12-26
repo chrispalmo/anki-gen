@@ -116,8 +116,7 @@ export const CustomizePage: React.FC<{
   return (
     <div
       style={{
-        padding: "1em",
-        height: "calc(100vh - 2em)",
+        height: "calc(100vh - 0.5em)",
         display: "flex",
         flexDirection: "column",
       }}
@@ -245,12 +244,17 @@ export const CustomizePage: React.FC<{
           </tbody>
         </table>
       </div>
-      <button className="customize-button" onClick={handleExport}>
-        Export ({clozeCardCount} cloze + {basicCardCount} basic cards)
-      </button>
-      <button className="customize-button" onClick={savePhrasesToLocalStorage}>
-        Save
-      </button>
+      <div style={{ display: "flex" }}>
+        <button className="customize-button" onClick={handleExport}>
+          Export ({clozeCardCount} cloze + {basicCardCount} basic cards)
+        </button>
+        <button
+          className="customize-button"
+          onClick={savePhrasesToLocalStorage}
+        >
+          Save
+        </button>
+      </div>
     </div>
   );
 };
