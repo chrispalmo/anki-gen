@@ -213,7 +213,7 @@ export const CustomizePage: React.FC<{
                     textAlign: "center",
                   }}
                 >
-                  {"✅".repeat(phrase.cloze)}
+                  {"✅".repeat(phrase.cloze) || "🅱️"}
                 </td>
                 <td
                   style={{
